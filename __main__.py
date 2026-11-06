@@ -1,6 +1,9 @@
-from __init__ import i, c, d
+import sys
+
+from __init__ import i, c, d, cc, c_stream, d_stream
 from _utils import bcolors
 import argparse
+
 
 def sb():
     info_text = "|-| The FLAC Audio File Data Steganograph Tool |-|"
@@ -13,7 +16,7 @@ def sb():
         "    / /     / /\\/ _\\  \\ \\ \\ \\                     ",
         "   / /___  / / / /    _\\ \\_\\ \\                    ",
         "   \\____/  \\/  \\/     \\__/\\__/                    ",
-    ] # made from an ascii website and padded manually, could'a used a text file or smth
+    ]  # made from an ascii website and padded manually, could'a used a text file or smth
     gradient_lines = []
     starting_color = (214, 112, 214)
     ending_color = (188, 63, 188)
@@ -68,6 +71,20 @@ if __name__ == "__main__":
         nargs="?",
     )
 
+    parser.add_argument(
+        "-i",
+        "--input",
+        help="the input data/file (for make/decode operation)",
+        required=False,
+    )
+
+    parser.add_argument(
+        "-o",
+        "--output",
+        help="the output file (for make/decode operation)",
+        required=False,
+    )
+
     args = parser.parse_args()
 
     if not args.operation:
@@ -80,10 +97,58 @@ if __name__ == "__main__":
         i()
 
     elif args.operation == "make":
-        pass
+        input_file = args.input
+        output_file = args.output
+
+        if not input_file:
+            input_file = sys.stdin.buffer
+            print("Reading from stdin...")
+        else:
+            input_file = open(input_file, "rb")
+
+        if not output_file:
+            raise ValueError("c_stream currently requires an output file")
+
+        try:
+            for percent in c_stream(input_file, output_file):
+                sys.stdout.write(
+                    f"\r{bcolors.CYAN}Progress: {percent:.2f}%{bcolors.ENDC}"
+                )
+                sys.stdout.flush()
+            print(
+                f"\n{bcolors.GREEN}Successfully created steganograph: {output_file}{bcolors.ENDC}"
+            )
+        finally:
+            if input_file is not sys.stdin.buffer:
+                input_file.close()
 
     elif args.operation == "decode":
-        pass
+        input_file = args.input
+        output_file = args.output
+
+        if not input_file:
+            input_file = sys.stdin.buffer
+            print("Reading from stdin...")
+        else:
+            input_file = open(input_file, "rb")
+
+        if not output_file:
+            raise ValueError("d_stream currently requires an output file")
+        else:
+            output_file = open(output_file, "wb")
+
+        try:
+            for percent in d_stream(input_file, output_file):
+                sys.stdout.write(
+                    f"\r{bcolors.CYAN}Progress: {percent:.2f}%{bcolors.ENDC}"
+                )
+                sys.stdout.flush()
+            print(
+                f"\n{bcolors.GREEN}Successfully decoded steganograph: {output_file}{bcolors.ENDC}"
+            )
+        finally:
+            if input_file is not sys.stdin.buffer:
+                input_file.close()
 
     elif args.operation == "info":
         print(vi())

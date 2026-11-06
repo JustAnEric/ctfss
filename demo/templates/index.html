@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CTFSS</title>
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+    <h1>CTFSS Converter</h1>
+    <small>Max upload file size on the server is {{ max_filesize / (1024 * 1024) }} MB</small>
+
+    <form id="encode-form" method="post" enctype="multipart/form-data">
+        <h2>Encode</h2>
+        <small>Max file size {{ max_encode_filesize / (1024 * 1024) }} MB</small>
+        <label for="encode">File:</label>
+        <input type="file" id="encode" name="file" accept="*" required><br><br>
+
+        <button type="submit">Encode</button>
+        progress: <span id="encode-progress">0%</span>
+    </form>
+
+    <form id="decode-form" method="post" enctype="multipart/form-data">
+        <h2>Decode</h2>
+        <small>Max file size {{ max_decode_filesize / (1024 * 1024) }} MB</small>
+        <label for="decode-audio">CTFSS File:</label>
+        <input type="file" id="decode-audio" name="file" accept=".flac,.ctfss" required><br><br>
+
+        <button type="submit">Decode</button>
+        progress: <span id="decode-progress">0%</span>
+    </form>
+
+    <script type="module" src="/js/index.js"></script>
+</body>
+</html>
