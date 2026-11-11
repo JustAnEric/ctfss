@@ -13,21 +13,29 @@
     <form id="encode-form" method="post" enctype="multipart/form-data">
         <h2>Encode</h2>
         <small>Max file size {{ max_encode_filesize / (1024 * 1024) }} MB</small>
+        <br>
         <label for="encode">File:</label>
-        <input type="file" id="encode" name="file" accept="*" required><br><br>
+        <input type="file" id="encode" name="file" accept="*" max="{{ max_encode_filesize }}" required><br><br>
 
-        <button type="submit">Encode</button>
-        progress: <span id="encode-progress">0%</span>
+        <button type="submit" class="button">Encode</button>
+        <div class="progress-bar" id="encode-progress">
+            <div class="progress-inline"></div>
+            <div class="percent">0%</div>
+        </div>
     </form>
 
     <form id="decode-form" method="post" enctype="multipart/form-data">
         <h2>Decode</h2>
         <small>Max file size {{ max_decode_filesize / (1024 * 1024) }} MB</small>
+        <br>
         <label for="decode-audio">CTFSS File:</label>
-        <input type="file" id="decode-audio" name="file" accept=".flac,.ctfss" required><br><br>
+        <input type="file" id="decode-audio" name="file" accept=".flac,.ctfss" max="{{ max_decode_filesize }}" required><br><br>
 
-        <button type="submit">Decode</button>
-        progress: <span id="decode-progress">0%</span>
+        <button type="submit" class="button">Decode</button>
+        <div class="progress-bar" id="decode-progress">
+            <div class="progress-inline"></div>
+            <div class="percent">0%</div>
+        </div>
     </form>
 
     <script type="module" src="/js/index.js"></script>

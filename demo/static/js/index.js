@@ -19,7 +19,11 @@ encodeForm.addEventListener("submit", async (event) => {
             console.error("No data received from the server.");
             return;
         }
-        document.getElementById("encode-progress").textContent = "0%";
+        const enProg = document.getElementById("encode-progress");
+        const enProgInline = enProg.querySelector(".progress-inline");
+        const enProgPercent = enProg.querySelector(".percent");
+        enProgInline.style.width = "0%";
+        enProgPercent.textContent = "0%";
         while (true) {
             const { value, done } = await reader.read();
             if (done) break;
@@ -31,7 +35,10 @@ encodeForm.addEventListener("submit", async (event) => {
                 downloadLink.click();
                 break;
             } else {
-                document.getElementById("encode-progress").textContent = `${dd.split(":",2)[1]}%`;
+                let percent = dd.split(":",2)[1].trim();
+                let percentAsNum = parseFloat(percent);
+                enProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
+                enProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
             }
         }
     }
@@ -57,7 +64,13 @@ decodeForm.addEventListener("submit", async (event) => {
             return;
         }
 
-        document.getElementById("decode-progress").textContent = "0%";
+        //document.getElementById("decode-progress").textContent = "0%";
+        const dcProg = document.getElementById("decode-progress");
+        const dcProgInline = dcProg.querySelector(".progress-inline");
+        const dcProgPercent = dcProg.querySelector(".percent");
+        dcProgInline.style.width = "0%";
+        dcProgPercent.textContent = "0%";
+
         while (true) {
             const { value, done } = await reader.read();
             if (done) break;
@@ -69,7 +82,10 @@ decodeForm.addEventListener("submit", async (event) => {
                 downloadLink.click();
                 break;
             } else {
-                document.getElementById("decode-progress").textContent = `${dd.split(":",2)[1]}%`;
+                let percent = dd.split(":",2)[1].trim();
+                let percentAsNum = parseFloat(percent);
+                dcProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
+                dcProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
             }
         }
     }
