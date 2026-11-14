@@ -14,31 +14,45 @@ encodeForm.addEventListener("submit", async (event) => {
         // data stream
 
         const reader = response.body.getReader();
-        const { value: firstChunk, done: firstDone } = await reader.read();
-        if (firstDone) {
-            console.error("No data received from the server.");
-            return;
-        }
+        const decoder = new TextDecoder();
         const enProg = document.getElementById("encode-progress");
         const enProgInline = enProg.querySelector(".progress-inline");
         const enProgPercent = enProg.querySelector(".percent");
         enProgInline.style.width = "0%";
         enProgPercent.textContent = "0%";
+        let buffer = "";
+        
         while (true) {
             const { value, done } = await reader.read();
-            if (done) break;
-            const dd = new TextDecoder().decode(value);
-            if (dd.startsWith("data: done")) {
-                const downloadLink = document.createElement("a");
-                downloadLink.href = dd.split(",")[1];
-                downloadLink.download = "steganograph.flac";
-                downloadLink.click();
+            if (done) {
+                buffer += decoder.decode();
                 break;
-            } else {
-                let percent = dd.split(":",2)[1].trim();
-                let percentAsNum = parseFloat(percent);
-                enProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
-                enProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+
+            let boundary;
+
+            while ((boundary = buffer.indexOf("\n\n")) !== -1) {
+                const event = buffer.slice(0, boundary);
+                buffer = buffer.slice(boundary + 2);
+
+                if (!event.startsWith("data: ")) continue;
+
+                const data = event.slice(6);
+            
+                if (data.startsWith("done,")) {
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = data.split(",")[1];
+                    downloadLink.download = "steganograph.flac";
+                    downloadLink.click();
+                    break;
+                } else {
+                    let percent = data.trim();
+                    let percentAsNum = parseFloat(percent);
+                    enProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
+                    enProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
+                }
             }
         }
     }
@@ -58,34 +72,45 @@ decodeForm.addEventListener("submit", async (event) => {
         // data stream
 
         const reader = response.body.getReader();
-        const { value: firstChunk, done: firstDone } = await reader.read();
-        if (firstDone) {
-            console.error("No data received from the server.");
-            return;
-        }
-
-        //document.getElementById("decode-progress").textContent = "0%";
+        const decoder = new TextDecoder();
         const dcProg = document.getElementById("decode-progress");
         const dcProgInline = dcProg.querySelector(".progress-inline");
         const dcProgPercent = dcProg.querySelector(".percent");
         dcProgInline.style.width = "0%";
         dcProgPercent.textContent = "0%";
+        let buffer = "";
 
         while (true) {
             const { value, done } = await reader.read();
-            if (done) break;
-            const dd = new TextDecoder().decode(value);
-            if (dd.startsWith("data: done")) {
-                const downloadLink = document.createElement("a");
-                downloadLink.href = dd.split(",")[1];
-                downloadLink.download = dd.split(",")[1].split('/').at(-1);
-                downloadLink.click();
+            if (done) {
+                buffer += decoder.decode();
                 break;
-            } else {
-                let percent = dd.split(":",2)[1].trim();
-                let percentAsNum = parseFloat(percent);
-                dcProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
-                dcProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+
+            let boundary;
+
+            while ((boundary = buffer.indexOf("\n\n")) !== -1) {
+                const event = buffer.slice(0, boundary);
+                buffer = buffer.slice(boundary + 2);
+
+                if (!event.startsWith("data: ")) continue;
+
+                const data = event.slice(6);
+                
+                if (data.startsWith("done,")) {
+                    const downloadLink = document.createElement("a");
+                    downloadLink.href = data.split(",")[1];
+                    downloadLink.download = data.split(",")[1].split('/').at(-1);
+                    downloadLink.click();
+                    break;
+                } else {
+                    let percent = data.trim();
+                    let percentAsNum = parseFloat(percent);
+                    dcProgInline.style.width = `${percentAsNum.toFixed(1)}%`;
+                    dcProgPercent.textContent = `${percentAsNum.toFixed(1)}%`;
+                }
             }
         }
     }

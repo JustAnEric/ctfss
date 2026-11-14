@@ -19,7 +19,10 @@ from typing import Generator
 def magicpack(b: bytes, p: str = ""):
     # adds magic to the start of bytes
     MAGIC = b"CTFSS"
-    H = MAGIC + struct.pack(">BI", len(p), len(b)) + p.encode()
+    encname = p.encode("utf-8")
+    if len(encname) > 255:
+        raise ValueError("path is too long")
+    H = MAGIC + struct.pack(">BI", len(encname), len(b)) + encname
     return H + b
 
 
