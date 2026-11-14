@@ -84,3 +84,68 @@ button.button:active {
     box-shadow: 0 5px #666;
     transform: translateY(4px);
 }
+
+button.button:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.loader {
+    /* from https://cssloaders.github.io/ */
+    --color-1: #fff;
+    --color-2: #ff3d00;
+    --size: 1px;
+
+    width: calc(48 * var(--size));
+    height: calc(48 * var(--size));
+    border-radius: 50%;
+    display: inline-block;
+    border-top: calc(4 * var(--size)) solid var(--color-1);
+    border-right: calc(4 * var(--size)) solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+
+.loader[hidden] {
+    display: none;
+}
+
+.loader::after {
+    /* from https://cssloaders.github.io/ */
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(48 * var(--size));
+    height: calc(48 * var(--size));
+    border-radius: 50%;
+    border-left: calc(4 * var(--size)) solid var(--color-2);
+    border-bottom: calc(4 * var(--size)) solid transparent;
+    animation: rotation 0.5s linear infinite reverse;
+}
+
+@keyframes rotation {
+    /* from https://cssloaders.github.io/ */
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+button.button .loader {
+    --size: 0.25px;
+}
+
+footer {
+    margin-top: 40px;
+    font-size: 0.9em;
+    color: #aaa;
+}
+
+footer a {
+    color: #ff7e5f;
+    text-decoration: none;
+}

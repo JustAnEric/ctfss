@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>CTFSS Converter</h1>
-    <small>Max upload file size on the server is {{ max_filesize / (1024 * 1024) }} MB</small>
+    <small>Max upload file size on the server is {{ max_filesize / (1024 * 1024) }} MB</small><br>
     <small>Uploading files may take a while depending on your internet connection, <b>please be patient</b>! If you need bigger files, please consider using the CLI.</small>
 
     <form id="encode-form" method="post" enctype="multipart/form-data">
@@ -18,7 +18,10 @@
         <label for="encode">File:</label>
         <input type="file" id="encode" name="file" accept="*" max="{{ max_encode_filesize }}" required><br><br>
 
-        <button type="submit" class="button">Encode</button>
+        <button type="submit" class="button">
+            <span class="button-text">Encode</span>
+            <span class="loader" hidden></span>
+        </button>
         <div class="progress-bar" id="encode-progress">
             <div class="progress-inline"></div>
             <div class="percent">0%</div>
@@ -32,12 +35,20 @@
         <label for="decode-audio">CTFSS File:</label>
         <input type="file" id="decode-audio" name="file" accept=".flac,.ctfss" max="{{ max_decode_filesize }}" required><br><br>
 
-        <button type="submit" class="button">Decode</button>
+        <button type="submit" class="button">
+            <span class="button-text">Decode</span>
+            <span class="loader" hidden></span>
+        </button>
         <div class="progress-bar" id="decode-progress">
             <div class="progress-inline"></div>
             <div class="percent">0%</div>
         </div>
     </form>
+
+    <footer>
+        <p>CTFSS is a project by <a href="https://erikku.page" target="_blank">erikku</a>. <a href="https://github.com/erikku/ctfss" target="_blank">Source Code</a></p>
+        <small>Please consider <a href="https://erikku.page/donate" target="_blank">donating</a>.</small>
+    </footer>
 
     <script type="module" src="/js/index.js"></script>
 </body>

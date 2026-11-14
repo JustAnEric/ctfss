@@ -1,8 +1,14 @@
 const encodeForm = document.querySelector("#encode-form");
 const decodeForm = document.querySelector("#decode-form");
+const encodeButton = encodeForm.querySelector("button[type='submit']");
+const decodeButton = decodeForm.querySelector("button[type='submit']");
 
 encodeForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    encodeButton.disabled = true;
+    encodeButton.querySelector(".loader").hidden = false;
+    encodeButton.querySelector(".button-text").textContent = "Uploading...";
 
     const formData = new FormData(encodeForm);
     const response = await fetch("/api/encode", {
@@ -13,6 +19,8 @@ encodeForm.addEventListener("submit", async (event) => {
     if (response.ok) {
         // data stream
 
+        encodeButton.querySelector(".button-text").textContent = "Encoding...";
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         const enProg = document.getElementById("encode-progress");
@@ -21,7 +29,7 @@ encodeForm.addEventListener("submit", async (event) => {
         enProgInline.style.width = "0%";
         enProgPercent.textContent = "0%";
         let buffer = "";
-        
+
         while (true) {
             const { value, done } = await reader.read();
             if (done) {
@@ -56,10 +64,18 @@ encodeForm.addEventListener("submit", async (event) => {
             }
         }
     }
+
+    encodeButton.disabled = false;
+    encodeButton.querySelector(".loader").hidden = true;
+    encodeButton.querySelector(".button-text").textContent = "Encode";
 });
 
 decodeForm.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    decodeButton.disabled = true;
+    decodeButton.querySelector(".loader").hidden = false;
+    decodeButton.querySelector(".button-text").textContent = "Uploading...";
 
     const formData = new FormData(decodeForm);
 
@@ -70,6 +86,8 @@ decodeForm.addEventListener("submit", async (event) => {
 
     if (response.ok) {
         // data stream
+
+        decodeButton.querySelector(".button-text").textContent = "Decoding...";
 
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
@@ -114,4 +132,8 @@ decodeForm.addEventListener("submit", async (event) => {
             }
         }
     }
+
+    decodeButton.disabled = false;
+    decodeButton.querySelector(".loader").hidden = true;
+    decodeButton.querySelector(".button-text").textContent = "Decode";
 });
